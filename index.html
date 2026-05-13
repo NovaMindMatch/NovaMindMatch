@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NovaMind Match | Învățare compatibilă</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="page">
+    <header class="header">
+      <a class="brand" href="index.html"><span>NM</span> NovaMind Match</a>
+      <div class="hero">
+        <h1>Găsește profesorul potrivit după materie, stil și personalitate</h1>
+        <p>NovaMind Match conectează elevii cu meditatori compatibili nu doar pe baza materiei, ci și în funcție de personalitate, interese și stil de învățare.</p>
+      </div>
+    </header>
+
+    <section class="grid grid-2">
+      <article class="card">
+        <h2>Ce face NovaMind Match?</h2>
+        <p>Printr-un chestionar interactiv, utilizatorii sunt asociați cu tutori potriviți, crescând eficiența învățării și motivația. Profilele tutorilor sunt actualizate dintr-un catalog de profesori și tutori, astfel încât sugestia să fie personalizată.</p>
+        <div class="stats">
+          <div class="stat">
+            <strong>50+</strong>
+            Tutori disponibili
+          </div>
+          <div class="stat">
+            <strong>4.8</strong>
+            Notă medie
+          </div>
+          <div class="stat">
+            <strong>Rapid</strong>
+            Potrivire personalizată
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div id="summary"></div>
+        <form id="match-form">
+          <div class="form-group">
+            <label for="name">Numele tău</label>
+            <input type="text" id="name" name="name" placeholder="Ex: Maria" required />
+          </div>
+
+          <div class="form-group">
+            <label for="subject">Materia principală</label>
+            <select id="subject" name="subject" required>
+              <option value="">Alege materia</option>
+              <option>Matematică</option>
+              <option>Fizică</option>
+              <option>Chimie</option>
+              <option>Biologie</option>
+              <option>Română</option>
+              <option>Engleză</option>
+              <option>Geografie</option>
+              <option>Istorie</option>
+              <option>Informatică</option>
+              <option>Economics</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="personality">Ce descrie cel mai bine personalitatea ta?</label>
+            <select id="personality" name="personality" required>
+              <option value="">Alege o opțiune</option>
+              <option>Analitic</option>
+              <option>Creativ</option>
+              <option>Empatic</option>
+              <option>Metodic</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="learningStyle">Stilul tău de învățare</label>
+            <select id="learningStyle" name="learningStyle" required>
+              <option value="">Alege stilul</option>
+              <option>Vizual</option>
+              <option>Auditiv</option>
+              <option>Kinestezic</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Interese care te motivează</label>
+            <div style="display:grid; gap:10px;">
+              <label><input type="checkbox" name="interests" value="Tehnologie" /> Tehnologie</label>
+              <label><input type="checkbox" name="interests" value="Arte" /> Arte</label>
+              <label><input type="checkbox" name="interests" value="Natură" /> Natură</label>
+              <label><input type="checkbox" name="interests" value="Jocuri" /> Jocuri</label>
+              <label><input type="checkbox" name="interests" value="Muzică" /> Muzică</label>
+              <label><input type="checkbox" name="interests" value="Sport" /> Sport</label>
+              <label><input type="checkbox" name="interests" value="Călătorii" /> Călătorii</label>
+              <label><input type="checkbox" name="interests" value="Literatură" /> Literatură</label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="goals">Ce vrei să obții cu această meditație?</label>
+            <textarea id="goals" name="goals" placeholder="Ex: să înțeleg mai bine formulele, să mă pregătesc pentru examen..." rows="4"></textarea>
+          </div>
+
+          <button type="submit">Găsește profesorul nostru recomandat</button>
+          <p id="feedback" class="notice"></p>
+        </form>
+      </article>
+    </section>
+
+    <section class="callout">
+      <strong>Ce urmează?</strong>
+      <p>După trimiterea formularului, vei fi redirecționat către o pagină cu profilul unui tutor potențial, selectat în funcție de preferințele tale. Dacă vrei, poți genera altă recomandare imediat.</p>
+      <a class="action-link" id="view-profile" href="profile.html">Vezi profilul recomandat</a>
+    </section>
+  </main>
+
+  <footer>NovaMind Match • Conectăm elevii cu profesorii potriviți</footer>
+  <script src="script.js"></script>
+</body>
+</html>

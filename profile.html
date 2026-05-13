@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Profil Profesor | NovaMind Match</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="page">
+    <header class="header">
+      <a class="brand" href="index.html"><span>NM</span> NovaMind Match</a>
+      <div class="hero">
+        <h1>Profesor recomandat pentru tine</h1>
+        <p>Descoperă tutorul care se potrivește stilului tău de învățare, personalității și preferințelor tale. Dacă dorești, poți reveni pe pagina principală și completa din nou chestionarul.</p>
+      </div>
+    </header>
+
+    <section class="card tutor-card" id="profile-card">
+      <div class="tutor-header">
+        <div class="tutor-avatar" id="tutor-avatar">NM</div>
+        <div class="tutor-meta">
+          <p class="badge" id="tutor-subjects">Materia recomandată</p>
+          <h2 id="tutor-name">Profesor</h2>
+          <p id="tutor-experience" class="small-note"></p>
+        </div>
+      </div>
+      <p id="tutor-bio"></p>
+      <div class="stats">
+        <div class="stat">
+          <strong id="tutor-rating">4.9</strong>
+          Calificativ mediu
+        </div>
+        <div class="stat">
+          <strong id="tutor-personality">Persoană</strong>
+          Personalitate potrivită
+        </div>
+        <div class="stat">
+          <strong id="tutor-style">Stil</strong>
+          Stil de învățare
+        </div>
+      </div>
+
+      <div>
+        <h3>Interese comune</h3>
+        <ul class="tag-list" id="tutor-interests"></ul>
+      </div>
+
+      <div class="notice" id="no-match-notice">Dacă nu există date salvate, te poți întoarce la formular pentru a obține o potrivire personalizată.</div>
+      <div style="margin-top: 24px; display:flex; gap:12px; flex-wrap:wrap;">
+        <a class="action-link" href="index.html">Înapoi la chestionar</a>
+        <button class="action-link" id="refresh-btn" type="button">Găsește alt tutor</button>
+      </div>
+    </section>
+  </main>
+
+  <footer>NovaMind Match • Soluții de învățare adaptabile pentru elevi</footer>
+  <script>
+    const matchData = (() => {
+      try {
+        return JSON.parse(localStorage.getItem('novamindMatch'));
+      } catch {
+        return null;
+      }
+    })();
+
+    const setText = (selector, text) => {
+      const element = document.querySelector(selector);
+      if (element) element.textContent = text;
+    };
+
+    const renderProfile = (match) => {
+      if (!match || !match.tutor) {
+        document.querySelector('#tutor-name').textContent = 'Nicio pereche găsită';
+        setText('#tutor-bio', 'Completează chestionarul pentru a vedea profilul unui profesor compatibil.');
+        document.querySelector('#no-match-notice').textContent = 'Nu există date salvate. Mergi înapoi la pagina principală și completează formularul.';
+        return;
+      }
+
+      const tutor = match.tutor;
+      const initials = tutor.name.split(' ').map((part) => part[0]).join('').slice(0, 2).toUpperCase();
+      document.querySelector('#tutor-avatar').textContent = initials;
+      setText('#tutor-name', tutor.name);
+      setText('#tutor-subjects', tutor.subjects.join(' • '));
+      setText('#tutor-experience', `${tutor.experience} experiență • Notă ${tutor.rating}`);
+      setText('#tutor-bio', tutor.bio);
+      setText('#tutor-rating', tutor.rating.toFixed(1));
+      setText('#tutor-personality', tutor.personality);
+      setText('#tutor-style', tutor.learningStyle);
+
+      const interestsList = document.querySelector('#tutor-interests');
+      interestsList.innerHTML = '';
+      tutor.interests.forEach((interest) => {
+        const li = document.createElement('li');
+        li.className = 'tag';
+        li.textContent = interest;
+        interestsList.appendChild(li);
+      });
+      document.querySelector('#no-match-notice').classList.add('hidden');
+    };
+
+    const chooseAlternativeTutor = async () => {
+      if (!matchData || !matchData.answers) return;
+      try {
+        const response = await fetch('tutors.json');
+        if (!response.ok) return;
+        const tutors = await response.json();
+        const scores = tutors.map((tutor) => {
+          let score = 0;
+          if (tutor.subjects.includes(matchData.answers.subject)) score += 3;
+          if (tutor.personality === matchData.answers.personality) score += 2;
+          if (tutor.learningStyle === matchData.answers.learningStyle) score += 2;
+          const shared = tutor.interests.filter((interest) => matchData.answers.interests.includes(interest));
+          score += shared.length;
+          return { tutor, score };
+        });
+        const bestScore = Math.max(...scores.map((item) => item.score));
+        const alternatives = scores.filter((item) => item.score === bestScore).map((item) => item.tutor);
+        const newTutor = alternatives[Math.floor(Math.random() * alternatives.length)];
+        localStorage.setItem('novamindMatch', JSON.stringify({ answers: matchData.answers, tutor: newTutor }));
+        renderProfile({ tutor: newTutor });
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    renderProfile(matchData);
+    const refreshBtn = document.querySelector('#refresh-btn');
+    if (refreshBtn) refreshBtn.addEventListener('click', chooseAlternativeTutor);
+  </script>
+</body>
+</html>
