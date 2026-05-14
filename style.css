@@ -23,24 +23,6 @@
   box-sizing: border-box;
 }
 
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--bg);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--border);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--muted);
-}
-
 html, body {
   margin: 0;
   min-height: 100%;
@@ -213,18 +195,6 @@ input[type=text]::placeholder {
 select {
   cursor: pointer;
   background: var(--light-gray);
-  padding: 10px 12px;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%231a1a1a' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 12px center;
-  padding-right: 36px;
-}
-
-[data-theme="dark"] select {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23f5f5f5' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
 }
 
 select option {
@@ -649,6 +619,17 @@ footer {
   margin-bottom: 12px;
 }
 
+@media (max-width: 640px) {
+  .feedback-dropdown {
+    top: 84px;
+    right: 16px;
+  }
+
+  .feedback-content {
+    width: min(320px, calc(100vw - 36px));
+  }
+}
+
 .feedback-content input,
 .feedback-content textarea {
   width: 100%;
@@ -673,25 +654,4 @@ footer {
   color: white;
   text-decoration: none;
   border-radius: 4px;
-}
-
-/* Contact Section */
-.contact-section {
-  background: var(--light-gray);
-  padding: 20px;
-  border-radius: 16px;
-  margin-top: 20px;
-}
-
-.contact-section h3 {
-  margin-top: 0;
-}
-
-.contact-section p {
-  margin: 8px 0;
-  color: var(--muted);
-}
-
-.contact-section a {
-  color: var(--accent);
 }
