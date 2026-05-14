@@ -7,9 +7,29 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <div class="feedback-dropdown">
+    <button class="feedback-toggle" id="feedback-toggle">💬 Feedback</button>
+    <div class="feedback-content" id="feedback-content">
+      <h3>Trimite Feedback</h3>
+      <form id="feedback-form">
+        <div class="form-group">
+          <input type="text" name="name" placeholder="Nume (opțional)" />
+        </div>
+        <div class="form-group">
+          <input type="email" name="email" placeholder="Email (opțional)" />
+        </div>
+        <div class="form-group">
+          <textarea name="message" placeholder="Mesajul tău..." rows="4" required></textarea>
+        </div>
+        <button type="submit">Trimite</button>
+      </form>
+      <a href="about.html" class="feedback-about-btn">Despre NovaMind</a>
+    </div>
+  </div>
   <main class="page">
     <header class="header">
       <a class="brand" href="index.html"><span>NM</span> NovaMind Match</a>
+      <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">🌙</button>
       <div class="hero">
         <h1>Găsește profesorul potrivit după materie, stil și personalitate</h1>
         <p>NovaMind Match conectează elevii cu meditatori compatibili nu doar pe baza materiei, ci și în funcție de personalitate, interese și stil de învățare.</p>
@@ -22,7 +42,7 @@
         <p>Printr-un chestionar interactiv, utilizatorii sunt asociați cu tutori potriviți, crescând eficiența învățării și motivația. Profilele tutorilor sunt actualizate dintr-un catalog de profesori și tutori, astfel încât sugestia să fie personalizată.</p>
         <div class="stats">
           <div class="stat">
-            <strong>50+</strong>
+            <strong>500+</strong>
             Tutori disponibili
           </div>
           <div class="stat">
@@ -33,6 +53,9 @@
             <strong>Rapid</strong>
             Potrivire personalizată
           </div>
+        </div>
+        <div style="margin-top: 24px;">
+          <a class="action-link" href="about.html">Despre NovaMind Match</a>
         </div>
       </article>
 
@@ -106,15 +129,58 @@
         </form>
       </article>
     </section>
-
-    <section class="callout">
-      <strong>Ce urmează?</strong>
-      <p>După trimiterea formularului, vei fi redirecționat către o pagină cu profilul unui tutor potențial, selectat în funcție de preferințele tale. Dacă vrei, poți genera altă recomandare imediat.</p>
-      <a class="action-link" id="view-profile" href="profile.html">Vezi profilul recomandat</a>
-    </section>
   </main>
 
   <footer>NovaMind Match • Conectăm elevii cu profesorii potriviți</footer>
   <script src="script.js"></script>
+  <script>
+    // Theme toggle
+    const themeToggle = document.getElementById('theme-toggle');
+    const currentTheme = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', currentTheme);
+    themeToggle.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
+
+    themeToggle.addEventListener('click', () => {
+      const newTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+      themeToggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+    });
+
+    // Feedback dropdown
+    const feedbackToggle = document.getElementById('feedback-toggle');
+    const feedbackContent = document.getElementById('feedback-content');
+    const feedbackForm = document.getElementById('feedback-form');
+
+    feedbackToggle.addEventListener('click', () => {
+      feedbackContent.classList.toggle('show');
+    });
+
+    feedbackForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const formData = new FormData(feedbackForm);
+      const feedback = {
+        name: formData.get('name'),
+        email: formData.get('email'),
+        message: formData.get('message'),
+        timestamp: new Date().toISOString()
+      };
+
+      const feedbacks = JSON.parse(localStorage.getItem('feedbacks') || '[]');
+      feedbacks.push(feedback);
+      localStorage.setItem('feedbacks', JSON.stringify(feedbacks));
+
+      alert('Mulțumim pentru feedback!');
+      feedbackForm.reset();
+      feedbackContent.classList.remove('show');
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (event) => {
+      if (!feedbackToggle.contains(event.target) && !feedbackContent.contains(event.target)) {
+        feedbackContent.classList.remove('show');
+      }
+    });
+  </script>
 </body>
 </html>

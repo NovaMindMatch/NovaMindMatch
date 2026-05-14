@@ -7,9 +7,29 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <div class="feedback-dropdown">
+    <button class="feedback-toggle" id="feedback-toggle">💬 Feedback</button>
+    <div class="feedback-content" id="feedback-content">
+      <h3>Trimite Feedback</h3>
+      <form id="feedback-form">
+        <div class="form-group">
+          <input type="text" name="name" placeholder="Nume (opțional)" />
+        </div>
+        <div class="form-group">
+          <input type="email" name="email" placeholder="Email (opțional)" />
+        </div>
+        <div class="form-group">
+          <textarea name="message" placeholder="Mesajul tău..." rows="4" required></textarea>
+        </div>
+        <button type="submit">Trimite</button>
+      </form>
+      <a href="about.html" class="feedback-about-btn">Despre NovaMind</a>
+    </div>
+  </div>
   <main class="page">
     <header class="header">
       <a class="brand" href="index.html"><span>NM</span> NovaMind Match</a>
+      <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">🌙</button>
       <div class="hero">
         <h1>Profesor recomandat pentru tine</h1>
         <p>Descoperă tutorul care se potrivește stilului tău de învățare, personalității și preferințelor tale. Dacă dorești, poți reveni pe pagina principală și completa din nou chestionarul.</p>
@@ -46,10 +66,22 @@
         <ul class="tag-list" id="tutor-interests"></ul>
       </div>
 
+      <div class="contact-section">
+        <h3>Date de Contact</h3>
+        <p>
+          <strong>Email:</strong><br/>
+          <a id="tutor-email" href="mailto:">email@novamindmatch.com</a>
+        </p>
+        <p>
+          <strong>Telefon:</strong><br/>
+          <a id="tutor-phone" href="tel:">+40 XXX XXX XXX</a>
+        </p>
+      </div>
+
       <div class="notice" id="no-match-notice">Dacă nu există date salvate, te poți întoarce la formular pentru a obține o potrivire personalizată.</div>
-      <div style="margin-top: 24px; display:flex; gap:12px; flex-wrap:wrap;">
-        <a class="action-link" href="index.html">Înapoi la chestionar</a>
-        <button class="action-link" id="refresh-btn" type="button">Găsește alt tutor</button>
+      <div style="margin-top: 24px; display: flex; gap: 12px; flex-wrap: wrap;">
+        <button id="next-tutor-btn" class="action-link" style="flex: 1; min-width: 200px;">Alege Alt Profesor</button>
+        <a class="action-link" href="index.html" style="flex: 1; min-width: 200px; text-align: center;">Înapoi la Chestionar</a>
       </div>
     </section>
   </main>
@@ -88,6 +120,18 @@
       setText('#tutor-personality', tutor.personality);
       setText('#tutor-style', tutor.learningStyle);
 
+      const emailLink = document.querySelector('#tutor-email');
+      if (emailLink && tutor.email) {
+        emailLink.href = 'mailto:' + tutor.email;
+        emailLink.textContent = tutor.email;
+      }
+
+      const phoneLink = document.querySelector('#tutor-phone');
+      if (phoneLink && tutor.phone) {
+        phoneLink.href = 'tel:' + tutor.phone;
+        phoneLink.textContent = tutor.phone;
+      }
+
       const interestsList = document.querySelector('#tutor-interests');
       interestsList.innerHTML = '';
       tutor.interests.forEach((interest) => {
@@ -99,34 +143,96 @@
       document.querySelector('#no-match-notice').classList.add('hidden');
     };
 
-    const chooseAlternativeTutor = async () => {
-      if (!matchData || !matchData.answers) return;
-      try {
-        const response = await fetch('tutors.json');
-        if (!response.ok) return;
-        const tutors = await response.json();
-        const scores = tutors.map((tutor) => {
-          let score = 0;
-          if (tutor.subjects.includes(matchData.answers.subject)) score += 3;
-          if (tutor.personality === matchData.answers.personality) score += 2;
-          if (tutor.learningStyle === matchData.answers.learningStyle) score += 2;
-          const shared = tutor.interests.filter((interest) => matchData.answers.interests.includes(interest));
-          score += shared.length;
-          return { tutor, score };
-        });
-        const bestScore = Math.max(...scores.map((item) => item.score));
-        const alternatives = scores.filter((item) => item.score === bestScore).map((item) => item.tutor);
-        const newTutor = alternatives[Math.floor(Math.random() * alternatives.length)];
-        localStorage.setItem('novamindMatch', JSON.stringify({ answers: matchData.answers, tutor: newTutor }));
-        renderProfile({ tutor: newTutor });
-      } catch (error) {
-        console.error(error);
-      }
+    const chooseTutor = (answers, tutors) => {
+      const weights = tutors.map((tutor) => {
+        let score = 0;
+        if (tutor.subjects.includes(answers.subject)) score += 3;
+        if (tutor.personality === answers.personality) score += 2;
+        if (tutor.learningStyle === answers.learningStyle) score += 2;
+        const sharedInterests = tutor.interests.filter((interest) => answers.interests.includes(interest));
+        score += sharedInterests.length;
+        return { tutor, score };
+      });
+
+      const bestScore = Math.max(...weights.map((item) => item.score));
+      const candidates = weights.filter((item) => item.score === bestScore).map((item) => item.tutor);
+      if (candidates.length === 0) return tutors[Math.floor(Math.random() * tutors.length)];
+      return candidates[Math.floor(Math.random() * candidates.length)];
+    };
+
+    const loadTutors = async () => {
+      const response = await fetch('tutors.json');
+      if (!response.ok) throw new Error('Unable to load tutors');
+      return response.json();
     };
 
     renderProfile(matchData);
-    const refreshBtn = document.querySelector('#refresh-btn');
-    if (refreshBtn) refreshBtn.addEventListener('click', chooseAlternativeTutor);
+
+    // Next tutor button
+    const nextTutorBtn = document.getElementById('next-tutor-btn');
+    if (nextTutorBtn && matchData && matchData.answers) {
+      nextTutorBtn.addEventListener('click', async () => {
+        try {
+          const tutors = await loadTutors();
+          const newTutor = chooseTutor(matchData.answers, tutors);
+          const newMatch = { answers: matchData.answers, tutor: newTutor };
+          localStorage.setItem('novamindMatch', JSON.stringify(newMatch));
+          renderProfile(newMatch);
+        } catch (error) {
+          alert('A apărut o problemă. Încearcă din nou.');
+          console.error(error);
+        }
+      });
+    }
+  </script>
+  <script>
+    // Theme toggle
+    const themeToggle = document.getElementById('theme-toggle');
+    const currentTheme = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', currentTheme);
+    themeToggle.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
+
+    themeToggle.addEventListener('click', () => {
+      const newTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+      themeToggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+    });
+
+    // Feedback dropdown
+    const feedbackToggle = document.getElementById('feedback-toggle');
+    const feedbackContent = document.getElementById('feedback-content');
+    const feedbackForm = document.getElementById('feedback-form');
+
+    feedbackToggle.addEventListener('click', () => {
+      feedbackContent.classList.toggle('show');
+    });
+
+    feedbackForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const formData = new FormData(feedbackForm);
+      const feedback = {
+        name: formData.get('name'),
+        email: formData.get('email'),
+        message: formData.get('message'),
+        timestamp: new Date().toISOString()
+      };
+
+      const feedbacks = JSON.parse(localStorage.getItem('feedbacks') || '[]');
+      feedbacks.push(feedback);
+      localStorage.setItem('feedbacks', JSON.stringify(feedbacks));
+
+      alert('Mulțumim pentru feedback!');
+      feedbackForm.reset();
+      feedbackContent.classList.remove('show');
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (event) => {
+      if (!feedbackToggle.contains(event.target) && !feedbackContent.contains(event.target)) {
+        feedbackContent.classList.remove('show');
+      }
+    });
   </script>
 </body>
 </html>

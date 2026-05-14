@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Despre NovaMind Match | Învățare Personalizată</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="feedback-dropdown">
+    <button class="feedback-toggle" id="feedback-toggle">💬 Feedback</button>
+    <div class="feedback-content" id="feedback-content">
+      <h3>Trimite Feedback</h3>
+      <form id="feedback-form">
+        <div class="form-group">
+          <input type="text" name="name" placeholder="Nume (opțional)" />
+        </div>
+        <div class="form-group">
+          <input type="email" name="email" placeholder="Email (opțional)" />
+        </div>
+        <div class="form-group">
+          <textarea name="message" placeholder="Mesajul tău..." rows="4" required></textarea>
+        </div>
+        <button type="submit">Trimite</button>
+      </form>
+      <a href="about.html" class="feedback-about-btn">Despre NovaMind</a>
+    </div>
+  </div>
+  <main class="page">
+    <header class="header">
+      <a class="brand" href="index.html"><span>NM</span> NovaMind Match</a>
+      <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">🌙</button>
+      <div class="hero">
+        <h1>Despre NovaMind Match</h1>
+        <p>Descoperă cum transformăm educația prin conexiuni inteligente și personalizate.</p>
+      </div>
+    </header>
+
+    <section class="card">
+      <h2>Misiunea Noastră</h2>
+      <p>
+        NovaMind Match este o platformă inovatoare dedicată revolutionării modului în care elevii se conectează cu profesorii. 
+        Credem că educația de calitate nu este doar despre materie, ci despre a găsi mentorul potrivit care să înțeleagă 
+        nu doar nevoile academice, ci și personalitatea, stilul de învățare și aspirațiile fiecărui elev.
+      </p>
+    </section>
+
+    <section class="card">
+      <h2>Cum Funcționează</h2>
+      <p>
+        Platforma noastră utilizează un algoritm inteligent care analizează răspunsurile din chestionar pentru a identifica 
+        profesorul cu cea mai bună compatibilitate. Luăm în considerare:
+      </p>
+      <ul style="margin: 16px 0; color: var(--text);">
+        <li><strong>Materia de studiu:</strong> Potrivim experții în domeniile în care aveți nevoie.</li>
+        <li><strong>Personalitatea:</strong> Analiticii preferă logică și structură, creativii preferă inovație, etc.</li>
+        <li><strong>Stilul de învățare:</strong> Vizual, auditiv sau kinestezic - fiecare persoană învață diferit.</li>
+        <li><strong>Interesele comune:</strong> Când profesor și elev au pasiuni similare, conexiunea este mai profundă.</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>Beneficiile Platformei</h2>
+      <div class="stats">
+        <div class="stat">
+          <strong>Eficiență</strong>
+          Lecții adaptate stilului tău de învățare
+        </div>
+        <div class="stat">
+          <strong>Motivație</strong>
+          Conexiune autentică cu mentorul tău
+        </div>
+        <div class="stat">
+          <strong>Progres Rapid</strong>
+          Rezultate măsurabile și susținute
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Profesorii Noștri</h2>
+      <p>
+        Rețeaua noastră cuprinde peste 500 de profesori experimentați din diverse domenii. Toți sunt certificați, 
+        cu ani de experiență în predare și o pasiune pentru a ajuta elevii să atingă potențialul lor maxim.
+      </p>
+      <p>
+        Fiecare profesor din echipa noastră a fost selectat nu doar pentru competență, ci și pentru capacitatea 
+        de a se adapta la stilul și nevoile individuale ale elevilor. Evaluările și feedback-ul elevilor existenți 
+        garantează o calitate constantă a serviciilor.
+      </p>
+    </section>
+
+    <section class="card">
+      <h2>Viziunea Noastră</h2>
+      <p>
+        Visez la o lume unde fiecare elev are acces la educație personalizată de calitate, indiferent de background. 
+        Prin NovaMind Match, dorим să democratizez mentoria și să fac învățarea mai accesibilă, mai eficientă și mai 
+        plăcută pentru toți.
+      </p>
+      <p>
+        Credem că educația nu este „one-size-fits-all". Fiecare minte este unică, și merită o abordare unică.
+      </p>
+    </section>
+
+    <section class="card" style="text-align: center;">
+      <h2>Gata să Găsești Profesorul Potrivit?</h2>
+      <p>Completează chestionarul nostru și descoperă care mentor se potrivește perfect pentru tine.</p>
+      <a class="action-link" href="index.html">Mergi la Chestionar</a>
+    </section>
+  </main>
+
+  <footer>NovaMind Match • Transformând educația prin conexiuni inteligente</footer>
+  <script>
+    // Theme toggle
+    const themeToggle = document.getElementById('theme-toggle');
+    const currentTheme = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', currentTheme);
+    themeToggle.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
+
+    themeToggle.addEventListener('click', () => {
+      const newTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+      themeToggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+    });
+
+    // Feedback dropdown
+    const feedbackToggle = document.getElementById('feedback-toggle');
+    const feedbackContent = document.getElementById('feedback-content');
+    const feedbackForm = document.getElementById('feedback-form');
+
+    feedbackToggle.addEventListener('click', () => {
+      feedbackContent.classList.toggle('show');
+    });
+
+    feedbackForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const formData = new FormData(feedbackForm);
+      const feedback = {
+        name: formData.get('name'),
+        email: formData.get('email'),
+        message: formData.get('message'),
+        timestamp: new Date().toISOString()
+      };
+
+      const feedbacks = JSON.parse(localStorage.getItem('feedbacks') || '[]');
+      feedbacks.push(feedback);
+      localStorage.setItem('feedbacks', JSON.stringify(feedbacks));
+
+      alert('Mulțumim pentru feedback!');
+      feedbackForm.reset();
+      feedbackContent.classList.remove('show');
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (event) => {
+      if (!feedbackToggle.contains(event.target) && !feedbackContent.contains(event.target)) {
+        feedbackContent.classList.remove('show');
+      }
+    });
+  </script>
+</body>
+</html>

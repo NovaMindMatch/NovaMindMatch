@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Feedback | NovaMind Match</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="page">
+    <header class="header">
+      <a class="brand" href="index.html"><span>NM</span> NovaMind Match</a>
+      <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">🌙</button>
+      <div class="hero">
+        <h1>Feedback</h1>
+        <p>Împărtășește-ne părerea ta despre NovaMind Match pentru a ne ajuta să îmbunătățim serviciile.</p>
+      </div>
+    </header>
+
+    <section class="card">
+      <h2>Trimite Feedback</h2>
+      <form id="feedback-form">
+        <div class="form-group">
+          <label for="name">Nume (opțional)</label>
+          <input type="text" id="name" name="name" placeholder="Numele tău" />
+        </div>
+        <div class="form-group">
+          <label for="email">Email (opțional)</label>
+          <input type="email" id="email" name="email" placeholder="email@exemplu.com" />
+        </div>
+        <div class="form-group">
+          <label for="message">Mesaj</label>
+          <textarea id="message" name="message" placeholder="Scrie feedback-ul tău aici..." rows="6" required></textarea>
+        </div>
+        <button type="submit">Trimite Feedback</button>
+        <p id="feedback-message" class="notice"></p>
+      </form>
+    </section>
+
+    <section class="card" style="text-align: center;">
+      <h2>Înapoi la Pagina Principală</h2>
+      <a class="action-link" href="index.html">Mergi la Chestionar</a>
+    </section>
+  </main>
+
+  <footer>NovaMind Match • Feedback-ul tău ne ajută să creștem</footer>
+  <script>
+    // Theme toggle
+    const themeToggle = document.getElementById('theme-toggle');
+    const currentTheme = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', currentTheme);
+    themeToggle.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
+
+    themeToggle.addEventListener('click', () => {
+      const newTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+      themeToggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+    });
+
+    // Feedback form
+    const form = document.getElementById('feedback-form');
+    const message = document.getElementById('feedback-message');
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const formData = new FormData(form);
+      const feedback = {
+        name: formData.get('name'),
+        email: formData.get('email'),
+        message: formData.get('message'),
+        timestamp: new Date().toISOString()
+      };
+
+      // Save to localStorage (in a real app, send to server)
+      const feedbacks = JSON.parse(localStorage.getItem('feedbacks') || '[]');
+      feedbacks.push(feedback);
+      localStorage.setItem('feedbacks', JSON.stringify(feedbacks));
+
+      message.textContent = 'Mulțumim pentru feedback! Mesajul tău a fost trimis.';
+      message.style.color = 'var(--accent)';
+      form.reset();
+    });
+  </script>
+</body>
+</html>
